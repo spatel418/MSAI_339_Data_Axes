@@ -294,12 +294,14 @@ def fit_tfidf_vectorizer(input_vocab_file, input_tokenzied_claims_file, output_f
 
     # Initialize vectorizer
     vectorizer = TfidfVectorizer(
-        vocabulary=vocab_index, #note that I originally just passed vocab though this should produce the same result
+        vocabulary=vocab_index,
         tokenizer=str.split,
         lowercase=False,
         norm="l2",
         dtype=float,
-        use_idf=True
+        use_idf=True,
+        min_df = 10,
+        max_df = 0.8
     )
 
     #compute document frequencies
@@ -390,26 +392,36 @@ if __name__ == "__main__":
     #tokenize, remove stopwords, stem
     #preprocess_and_tokenize("/Users/karlgadicke/Desktop/Data science USPTO data/feature_engineering/pg_claims_cleaned.csv", "/Users/karlgadicke/Desktop/Data science USPTO data/feature_engineering/pg_claims_tokenized.csv")
     '''
-    df1 = pd.read_csv("/Users/karlgadicke/Desktop/Data science USPTO data/feature_engineering/pg_claims_cleaned.csv", nrows=20)
+    df1 = pd.read_csv("/Users/karlgadicke/Desktop/Data science USPTO data/classification/combined_df.csv", nrows=20)
     print(df1)
 
     df2 = pd.read_csv("/Users/karlgadicke/Desktop/Data science USPTO data/feature_engineering/pg_claims_tokenized.csv", nrows=20)
     print(df2)
 
-    with open("/Users/karlgadicke/Desktop/Data science USPTO data/feature_engineering/pg_claims_tokenized.csv", "r", encoding="utf-8") as f:
+    with open("/Users/karlgadicke/Desktop/Data science USPTO data/classification/combined_df.csv", "r", encoding="utf-8") as f:
         row_count = sum(1 for _ in f) - 1  # subtract 1 for header
     print(f"Total rows: {row_count}")
     '''
     #make the vocabulary
-    #build_vocabulary("/Users/karlgadicke/Desktop/Data science USPTO data/feature_engineering/pg_claims_tokenized.csv", "/Users/karlgadicke/Desktop/Data science USPTO data/feature_engineering/vocabulary.json")
+    #build_vocabulary("/Users/karlgadicke/Desktop/Data science USPTO data/classification/combined_df.csv", "/Users/karlgadicke/Desktop/Data science USPTO data/feature_engineering/vocabulary.json")
 
     #make the TF-IDF vectorizer
-    #fit_tfidf_vectorizer("/Users/karlgadicke/Desktop/Data science USPTO data/feature_engineering/vocabulary.json", "/Users/karlgadicke/Desktop/Data science USPTO data/feature_engineering/pg_claims_tokenized.csv", "/Users/karlgadicke/Desktop/Data science USPTO data/feature_engineering/tfidf_vectorizer.joblib")
+    #fit_tfidf_vectorizer("/Users/karlgadicke/Desktop/Data science USPTO data/feature_engineering/vocabulary.json", "/Users/karlgadicke/Desktop/Data science USPTO data/classification/combined_df.csv", "/Users/karlgadicke/Desktop/Data science USPTO data/feature_engineering/tfidf_vectorizer_10_8.joblib")
 
     #make the TF-IDF matrix
-    make_tfidf_matrix("/Users/karlgadicke/Desktop/Data science USPTO data/feature_engineering/vocabulary.json", "/Users/karlgadicke/Desktop/Data science USPTO data/feature_engineering/pg_claims_tokenized.csv", "/Users/karlgadicke/Desktop/Data science USPTO data/feature_engineering/tfidf_vectorizer.joblib", "/Users/karlgadicke/Desktop/Data science USPTO data/feature_engineering/tfidf_features.joblib")
+    #make_tfidf_matrix("/Users/karlgadicke/Desktop/Data science USPTO data/feature_engineering/vocabulary.json", "/Users/karlgadicke/Desktop/Data science USPTO data/classification/combined_df.csv", "/Users/karlgadicke/Desktop/Data science USPTO data/feature_engineering/tfidf_vectorizer_10_8.joblib", "/Users/karlgadicke/Desktop/Data science USPTO data/feature_engineering/tfidf_features_10_8.joblib")
+
+    with open("/Users/karlgadicke/Desktop/Data science USPTO data/classification/combined_df.csv", "r",
+              encoding="utf-8") as f:
+        row_count = sum(1 for _ in f) - 1  # subtract 1 for header
+    print(f"CSV file total rows: {row_count}")
 
 
-
+    X = joblib.load("/Users/karlgadicke/Desktop/Data science USPTO data/feature_engineering/tfidf_features.joblib")
+    print("TFIDF matrix:")
+    print("Matrix type:", type(X))
+    print("Matrix shape:", X.shape)
+    print("Rows:", X.shape[0])
+    print("Columns:", X.shape[1])
 
 
